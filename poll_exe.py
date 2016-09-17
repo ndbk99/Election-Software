@@ -13,24 +13,52 @@ class App:
         self.title.pack()
 
         # Create "next", "back", "submit" buttons
+        next_button = Button(master, text="Next")
+        next_button.callback = self.next_question
+        next_button.pack()
 
-    def print_check(self,text):
-        print(text)
+        back_button = Button(master, text="Back")
+        back_button.pack()
+        callback=self.previous_question()
+
+        submit_button = Button(master, text="Submit", callback=self.submit_answer())
+        submit_button.pack()
+
+        # For some reason, the button functions are being called automatically - why?
 
     def ask_question(self,n):
+        self.on_question = n
         nth_question = self.questions[n]
         # Create question label
         Label(self.master, text=nth_question.question).pack()
 
         # Create radio buttons
-        answer = IntVar()
+        choice = IntVar()
         for x in range(len(nth_question.options)):
             option = nth_question.options[x]  # Get option
-            Radiobutton(self.master, text=option, variable=answer, value=x).pack()  # Create radio button option
+            button = Radiobutton(self.master, text=option, variable=choice, value=x)  # Create radio button for option
+            button.pack()
+            self.questions[n].radio_buttons.append(button)
 
-        # How to actually store the answer once the user has added it?
-        # Maybe when the user presses "Next", we store the current value of "answer".
-        # WRITE THIS NEXT!
+    def next_question(self):
+        print("next_question called")
+        for button in self.questions[self.on_question].radio_buttons:
+            button.pack_forget()  # Delete previous question's options
+        # self.questions[self.on_question].answers.append(choice)  # Add previous answer to list ?? HOW
+        self.ask_question(self.on_question + 1)
+
+    def previous_question(self):
+        print("previous_question called")
+        for button in self.questions[self.on_question].radio_buttons:
+            button.pack_forget()  # Delete previous question's options
+        # self.questions[self.on_question].answers.append(choice)
+        if self.on_question > 0:
+            self.ask_question(self.on_question - 1)
+        else:
+            print("This is the first question; cannot go back")
+
+    def submit_answer(self):
+        print("Submitted")
 
 # Class to hold the questions and their answers
 class Question:
@@ -38,11 +66,12 @@ class Question:
         self.question = question
         self.options = options
         self.answers = []
+        self.radio_buttons = []
 
-    def add_answer(self,answer):
-        self.answers.append(answer)
+    def submit_answer(self,text):
+        print("submitted")
 
-#
+# Run the poll
 def initialize_poll():
     print("Started")
 
@@ -56,7 +85,7 @@ def initialize_poll():
     poll = App(window,questions)
     print("Made window")
 
-    poll.ask_question(1)
+    # poll.ask_question(0)
 
     # End program on exit
     window.mainloop()
