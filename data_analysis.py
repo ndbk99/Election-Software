@@ -74,12 +74,30 @@ class Poll:
 
         ########################### GUI elements ###############################
 
-        # Add dropdowns for demographic attributes
+        # Add labels and dropdowns for demographic attributes
+        self.dropdowns = {}
         for n in range(6):
             self.add_demographic_dropdown(n)
 
+        # Add label and dropdown for question topic
+        label = Label(self.master,text="Questions")
+        label.pack()
+
+        question_topics = [q.topic for q in self.questions]
+        question = StringVar(self.master)
+        question.set("---------")
+        question_dropdown = OptionMenu(self.master,question,*question_topics[6:])
+        question_dropdown.pack()
+
+        # Add button to submit query
+        submit_button = Button(self.master,text="Submit Query")
+        submit_button.bind("<Button-1>",print_msg_EXTRA)  # Binding works; now just need to reformat retrieve_data to make the call work
+        submit_button.pack()
+
     def add_demographic_dropdown(self,question_number):
+        # Retrieve desired question
         question = self.questions[question_number]
+
         # Demographic label
         label = Label(self.master,text=question.topic)
         label.pack()
@@ -87,10 +105,13 @@ class Poll:
         # Demographic dropdown
         variable = StringVar(self.master)
         variable.set("------") # default value
-        self.master.school = OptionMenu(self.master,variable,*question.responses)
-        self.master.school.pack()
+        dropdown = OptionMenu(self.master,variable,*question.responses)
+        dropdown.pack()
 
-    def retrieve_data(self,demographics,question,answer):
+        # Add dropdown value variable to array
+        self.dropdowns[self.questions[question_number].topic] = variable
+
+    def retrieve_data(self,question,answer):
         """
         Retrieves data on a question for a specific set of voters who fit 1 or more demographic constraints
 
@@ -104,28 +125,59 @@ class Poll:
         -------
         percentage: percentage of voters in the demographic category who responded to the question with the given answer
         """
-        print("RETRIEVING DATA")
+        print("querying...")
 
-        # Retrieve voters whose demographics match desired
-        voters_counted = []
-        for voter in self.voters:
-            matches = False
-            for attr in demographics:
-                if voter.responses[attr] == demographics[attr]:
-                    matches = True
-                else:
-                    matches = False
-            if matches:
-                voters_counted.append(voter)
+        ###### Retrieve query data from dropdowns ######
+
+        # Get demographics dictionary; MAPS TO "demographics" PARAMETER RIGHT NOW
+        demographics = {}
+        for key in self.dropdowns:
+            if self.dropdowns[key].get() != "------":
+                this_question = self.questions[key].topic
+                demographics[this_question] = self.dropdowns[this_question]
+
+        for key in demographics:
+            print demographics[key]
+
+
+        # Get question topic; MAPS TO "question" PARAMETER RIGHT NOW
+        # Get answer; MAPS TO "answer" PARAMETER RIGHT NOW
+
+
+        ###### Select voters and retrieve desired response data from them ######
+
+        # Search through dropdowns and see if any have been set
+        demographics_set = False
+        for variable in self.dropdowns:
+            if self.dropdowns[variable].get() != "------":
+                demographics_set = True
+
+        # If at least one demographic field has been set, cull voters from that demographic
+        if demographics_set:
+            # Retrieve voters whose demographics match desired
+            voters = []
+            for voter in self.voters:
+                matches = False
+                for attr in demographics:
+                    if voter.responses[attr] == demographics[attr]:
+                        matches = True
+                    else:
+                        matches = False
+                if matches:
+                    voters.append(voter)
+        # If no demographic fields have been set, look at all voters
+        else:
+            voters = self.voters
 
         # Retrieve response % from voters in target demographic
-        total = len(voters_counted) * 1.0
+        total = len(voters) * 1.0
         matching_answer = 0.0
-        for voter in voters_counted:
+        for voter in voters:
             if voter.responses[question] == answer:
                 matching_answer += 1.0
         percentage = matching_answer / total * 100
-        print("%d of these voters (%d percent) answered %s with '%s'" % (matching_answer, percentage,question,answer))
+        print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer, percentage,question,answer))
+
         return percentage
 
 
@@ -176,9 +228,13 @@ class Question:
         self.statement = row[1]
         self.responses = row[2:]
 
-questions_file = "Poll_Questions.csv"
-voters_file = "CSG PoliSci Sample Poll Data.csv"
-csg_poll = Poll(questions_file,voters_file)
-csg_poll.initialize_poll()
-csg_poll.retrieve_data({"School": "Academy"},"Party","Green")
+def print_msg_EXTRA(input):
+    print("CONFIRMATION")
+
+questions_file = "Poll_Questions.csv"  # Link to file holding questions
+voters_file = "CSG PoliSci Sample Poll Data.csv"  # Link to file holding voters
+csg_poll = Poll(questions_file,voters_file)  # Create poll object
+csg_poll.initialize_poll()  # Initialize analysis window
+csg_poll.retrieve_data("Party","Democrat") # Take this out and bind it to a button when ready!
+# Also, right now the retrieve_data is returning stats out of all voters, since it runs automatically before the user can select
 end = raw_input("END")
