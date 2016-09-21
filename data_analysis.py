@@ -59,15 +59,36 @@ class Poll:
 
     def initialize_poll(self):
         """
-        Creates and runs a Poll instance.
+        Creates GUI window and reads questions and voter responses from files.
         Parameters: none
         Returns: none
         """
+        # Initialze Tk window
         window = Tk()
         self.master = window
+
+        # Read data
         self.read_questions()
         self.read_voters()
-        print("%s voters" % len(csg_poll.voters))
+        print("%s voters, %s questions" % (len(csg_poll.voters), len(csg_poll.questions)))
+
+        ########################### GUI elements ###############################
+
+        # Add dropdowns for demographic attributes
+        for n in range(6):
+            self.add_demographic_dropdown(n)
+
+    def add_demographic_dropdown(self,question_number):
+        question = self.questions[question_number]
+        # Demographic label
+        label = Label(self.master,text=question.topic)
+        label.pack()
+
+        # Demographic dropdown
+        variable = StringVar(self.master)
+        variable.set("------") # default value
+        self.master.school = OptionMenu(self.master,variable,*question.responses)
+        self.master.school.pack()
 
     def retrieve_data(self,demographics,question,answer):
         """
