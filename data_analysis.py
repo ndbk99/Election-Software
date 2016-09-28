@@ -33,6 +33,8 @@ class Poll:
         self.voters_file = voters_file
         self.questions = self.read_questions()
         self.voters = self.read_voters()
+        for question in self.questions:
+            print question.topic
 
     def read_questions(self):
         """
@@ -59,15 +61,15 @@ class Poll:
 
     def initialize_poll(self):
         """
-        Creates GUI window and reads questions and voter responses from files.
+        Creates GUI window, reads questions and voter responses from files, adds all GUI elements (dropdowns, button, etc.)
         Parameters: none
         Returns: none
         """
-        # Initialze Tk window
+        # Initialze GUI window
         window = Tk()
         self.master = window
 
-        # Read data
+        # Read data, print info about questions and voters
         self.read_questions()
         self.read_voters()
         print("%s voters, %s questions" % (len(csg_poll.voters), len(csg_poll.questions)))
@@ -80,23 +82,47 @@ class Poll:
             self.add_demographic_dropdown(n)
 
         # Add label and dropdown for question topic
-        label = Label(self.master,text="Questions")
-        label.pack()
-
+        Label(self.master,text="Question").pack()
         question_topics = [q.topic for q in self.questions]
+        question_topics.insert(0,"------")
         question = StringVar(self.master)
-        question.set("---------")
-        question_dropdown = OptionMenu(self.master,question,*question_topics[6:])
-        question_dropdown.pack()
+        question.set("------")
+        self.dropdown_question = question
+        self.question_dropdown = OptionMenu(self.master,question,*question_topics[7:],command=self.question_selected)
+        self.question_dropdown.pack()
+
+        # Add label and dropdown for desired answer
+        Label(self.master,text="Answer").pack()
+        answer = StringVar(self.master)
+        answer.set("------")
+        self.dropdown_answer = answer
+        self.answer_dropdown = OptionMenu(self.master,answer,"")
+        self.answer_dropdown.pack()
 
         # Add button to submit query
         submit_button = Button(self.master,text="Submit Query")
-        submit_button.bind("<Button-1>",print_msg_EXTRA)  # Binding works; now just need to reformat retrieve_data to make the call work
+        submit_button.bind("<Button-1>",self.query_data)  # Binding works; now just need to reformat retrieve_data for automated call
         submit_button.pack()
 
+    def query_data(self,event):
+        self.retrieve_data()
+
     def add_demographic_dropdown(self,question_number):
-        # Retrieve desired question
+        """
+        Adds GUI dropdown element for a demographic question.
+
+        Parameters
+        ----------
+        question_number: integer, 0 < question_number < n - 1
+
+        Returns
+        -------
+        none; just adds GUI elements
+        """
+        # Retrieve desired question and options
         question = self.questions[question_number]
+        question_responses = question.responses
+        question_responses.insert(0,"------")
 
         # Demographic label
         label = Label(self.master,text=question.topic)
@@ -105,27 +131,55 @@ class Poll:
         # Demographic dropdown
         variable = StringVar(self.master)
         variable.set("------") # default value
-        dropdown = OptionMenu(self.master,variable,*question.responses)
+        dropdown = OptionMenu(self.master,variable,*question_responses)
         dropdown.pack()
 
         # Add dropdown value variable to array
         self.dropdowns[self.questions[question_number].topic] = variable
 
-    def retrieve_data(self,question,answer):
+    def question_selected(self,event):
+        """
+        Adds answer options to answer dropdown when a question is selected.
+
+        Parameters
+        ----------
+        event: event thrown from selection of question in the question dropdown
+
+        Returns
+        -------
+        none; adds answers to answer dropdown
+        """
+        # Erase old answer choices
+        self.dropdown_answer.set("------")
+        self.answer_dropdown['menu'].delete(0,'end')
+
+        # Insert new answer choices
+        for question in self.questions:  # Find correct question object from topic name
+            if question.topic == self.dropdown_question.get():
+                new_question = question
+
+        new_answers = new_question.responses  # New array of answers
+        self.answer_dropdown['menu'].add_command(label="------",command=self.dropdown_answer.set("------"))  # Set default answer to blank
+
+        # Add new answer options to menu
+        for answer in new_answers:
+            self.answer_dropdown["menu"].add_command(label=answer, command=lambda answer=answer: self.dropdown_answer.set(answer))
+
+    def send_query(self,event):
+        self.retrieve_data()
+
+    def retrieve_data(self):
         """
         Retrieves data on a question for a specific set of voters who fit 1 or more demographic constraints
 
         Parameters
         ----------
-        demographics: dictionary, with keys of demographic category name and values of demographic response
-        question: string, which is the topic for the desired question
-        answer: string, which is the answer that you want the percentage for
+        none; automatically retrieves demographics, question, and answer from GUI dropdowns!
 
         Returns
         -------
         percentage: percentage of voters in the demographic category who responded to the question with the given answer
         """
-        print("querying...")
 
         ###### Retrieve query data from dropdowns ######
 
@@ -133,16 +187,13 @@ class Poll:
         demographics = {}
         for key in self.dropdowns:
             if self.dropdowns[key].get() != "------":
-                this_question = self.questions[key].topic
-                demographics[this_question] = self.dropdowns[this_question]
-
-        for key in demographics:
-            print demographics[key]
-
+                # this_question = self.questions[key].topic  # PROBLEM HERE... self.questions is not a dictionary
+                demographics[key] = self.dropdowns[key].get()
 
         # Get question topic; MAPS TO "question" PARAMETER RIGHT NOW
+        question = self.dropdown_question.get()
         # Get answer; MAPS TO "answer" PARAMETER RIGHT NOW
-
+        answer = self.dropdown_answer.get()
 
         ###### Select voters and retrieve desired response data from them ######
 
@@ -159,26 +210,34 @@ class Poll:
             for voter in self.voters:
                 matches = False
                 for attr in demographics:
-                    if voter.responses[attr] == demographics[attr]:
+                    # voter.responses[attr] == demographics[attr] or
+                    if voter.responses[attr].find(demographics[attr]):
                         matches = True
                     else:
                         matches = False
+                        break
                 if matches:
                     voters.append(voter)
         # If no demographic fields have been set, look at all voters
         else:
             voters = self.voters
 
-        # Retrieve response % from voters in target demographic
-        total = len(voters) * 1.0
-        matching_answer = 0.0
-        for voter in voters:
-            if voter.responses[question] == answer:
-                matching_answer += 1.0
-        percentage = matching_answer / total * 100
-        print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer, percentage,question,answer))
+        if len(voters) == 0:
+            print("No voters matched your query. Please change your parameters and try again.")
+        else:
+            # Retrieve response % from voters in target demographic
+            total = len(voters) * 1.0
+            # print("TOTAL = %d" % total)
+            matching_answer = 0.0
+            for voter in voters:
+                if voter.responses[question] == answer:
+                    matching_answer += 1.0
+            percentage = matching_answer / total * 100
+            print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer, percentage,question,answer))
 
-        return percentage
+            # RIGHT NOW ISN'T ACTUALLY CULLING RESPONSES PROPERLY
+
+            return percentage
 
 
 class Voter:
@@ -228,13 +287,9 @@ class Question:
         self.statement = row[1]
         self.responses = row[2:]
 
-def print_msg_EXTRA(input):
-    print("CONFIRMATION")
-
 questions_file = "Poll_Questions.csv"  # Link to file holding questions
 voters_file = "CSG PoliSci Sample Poll Data.csv"  # Link to file holding voters
 csg_poll = Poll(questions_file,voters_file)  # Create poll object
 csg_poll.initialize_poll()  # Initialize analysis window
-csg_poll.retrieve_data("Party","Democrat") # Take this out and bind it to a button when ready!
 # Also, right now the retrieve_data is returning stats out of all voters, since it runs automatically before the user can select
-end = raw_input("END")
+end = input("")

@@ -1,17 +1,17 @@
-School,What school are you from?,CSG,Columbus Academy,Wellington,St. Charles,School A,School B,School C,School D,School E,School F,School G,
-Grade,What grade are you in?,Middle school,9,10,11,12,Faculty,,
-Race/Ethnicity,What is your race or ethnicity? Check all that apply.,African-American,Asian,Caucasian,Hispanic/Latino,Indian,Middle Eastern,Native American/Alaskan,Pacific Islander,,
-Other minority,Are you part of any other minority group?,Disabled,LGBT+,Non-citizen,,
-Gender,What is your gender?,Male,Female,Other,,
-Party,What is your political affiliation?,None,Democrat,Green,Libertarian,Republican,Tea,Other,,
-Family views,Does your family generally share this affiliation?,Yes,No,I don't know,,
-Foreign policy,Please rate your stance on foreign policy from 1 to 5,1,2,3,4,5,,
-LGBT+ issues,Please rate your stance on LGBT+ issues from 1 to 5:,1,2,3,4,5,,
-Abortion,Please rate your stance on abortion from 1 to 5:,1,2,3,4,5,,
-Counter-terrorism,Please rate your stance on counter-terrorism from 1 to 5:,1,2,3,4,5,,
-Immigration,Please rate your stance on immigration from 1 to 5:,1,2,3,4,5,,
-Taxation,Please rate your stance on taxation from 1 to 5:,1,2,3,4,5,,
-Military funding,Please rate your stance on funding for the military from 1 to 5:,1,2,3,4,5,,
-Marijuana,Please rate your stance on recreational marijuana legalization from 1 to 5:,1,2,3,4,5,,
-President,Which presidential candidate do you support?,No opinion,Hillary Clinton,Gary Johnson,Jill Stein,Donald Trump,,
-Senator,Which senatorial candidate do you support?,No opinion,Rob Portman,Ted Strickland,,
+School,What school are you from?,CSG,Academy,Wellington,St. Charles,School A,School B,School C,School D,School E,School F,School G
+Grade,What grade are you in?,Middle school,9,10,11,12,Faculty
+Race/Ethnicity,What is your race or ethnicity? Check all that apply.,African-American,Asian,Caucasian,Hispanic/Latino,Indian,Middle Eastern,Native American/Alaskan,Pacific Islander
+Other minority,Are you part of any other minority group?,Disabled,LGBT+,Non-citizen,None
+Gender,What is your gender?,Male,Female,Other
+Party,What is your political affiliation?,None,Democrat,Green,Libertarian,Republican,Tea,Other
+Family views,Does your family generally share this affiliation?,Yes,No,I don't know
+Foreign policy,Please rate your stance on foreign policy from 1 to 5,1,2,3,4,5
+LGBT+ issues,Please rate your stance on LGBT+ issues from 1 to 5:,1,2,3,4,5
+Abortion,Please rate your stance on abortion from 1 to 5:,1,2,3,4,5
+Counter-terrorism,Please rate your stance on counter-terrorism from 1 to 5:,1,2,3,4,5
+Immigration,Please rate your stance on immigration from 1 to 5:,1,2,3,4,5
+Taxation,Please rate your stance on taxation from 1 to 5:,1,2,3,4,5
+Military funding,Please rate your stance on funding for the military from 1 to 5:,1,2,3,4,5
+Marijuana,Please rate your stance on recreational marijuana legalization from 1 to 5:,1,2,3,4,5
+President,Which presidential candidate do you support?,No opinion,Hillary Clinton,Gary Johnson,Jill Stein,Donald Trump
+Senator,Which senatorial candidate do you support?,No opinion,Rob Portman,Ted Strickland
