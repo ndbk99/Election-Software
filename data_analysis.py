@@ -33,8 +33,6 @@ class Poll:
         self.voters_file = voters_file
         self.questions = self.read_questions()
         self.voters = self.read_voters()
-        for question in self.questions:
-            print question.topic
 
     def read_questions(self):
         """
@@ -43,8 +41,11 @@ class Poll:
         questions = []
         with open(self.questions_file) as csvfile:
             doc = csv.reader(csvfile)
+            i = 0
             for row in doc:
                 questions.append(Question(self,row))
+                i += 1
+            print i, "HI"
         return questions
 
     def read_voters(self):
@@ -229,13 +230,17 @@ class Poll:
             total = len(voters) * 1.0
             # print("TOTAL = %d" % total)
             matching_answer = 0.0
+            i = 0
             for voter in voters:
-                if voter.responses[question] == answer:
+                i += 1
+                print(i, "th voter")
+                print(question)
+                if voter.responses[question] == answer:  # PROBLEM LINE!
                     matching_answer += 1.0
             percentage = matching_answer / total * 100
             print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer, percentage,question,answer))
 
-            # RIGHT NOW ISN'T ACTUALLY CULLING RESPONSES PROPERLY
+            # RIGHT NOW ISN'T WORKING FOR PRESIDENT AND SENATOR ... ?
 
             return percentage
 
@@ -291,5 +296,8 @@ questions_file = "Poll_Questions.csv"  # Link to file holding questions
 voters_file = "CSG PoliSci Sample Poll Data.csv"  # Link to file holding voters
 csg_poll = Poll(questions_file,voters_file)  # Create poll object
 csg_poll.initialize_poll()  # Initialize analysis window
-# Also, right now the retrieve_data is returning stats out of all voters, since it runs automatically before the user can select
+
+# test_voter = csg_poll.voters[0]
+# for key in test_voter.responses:
+    # print(key, test_voter.responses[key])
 end = input("")
