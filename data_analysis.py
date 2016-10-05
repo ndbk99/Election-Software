@@ -33,8 +33,6 @@ class Poll:
         self.voters_file = voters_file
         self.questions = self.read_questions()
         self.voters = self.read_voters()
-        for question in self.questions:
-            print question.topic
 
     def read_questions(self):
         """
@@ -56,6 +54,7 @@ class Poll:
             doc = csv.reader(csvfile)
             header = next(doc,None)
             for row in doc:
+                # print(row)
                 voters.append(Voter(self,row))
         return voters
 
@@ -72,7 +71,7 @@ class Poll:
         # Read data, print info about questions and voters
         self.read_questions()
         self.read_voters()
-        print("%s voters, %s questions" % (len(csg_poll.voters), len(csg_poll.questions)))
+        # print("%s voters, %s questions" % (len(csg_poll.voters), len(csg_poll.questions)))
 
         ########################### GUI elements ###############################
 
@@ -210,8 +209,8 @@ class Poll:
             for voter in self.voters:
                 matches = False
                 for attr in demographics:
-                    # voter.responses[attr] == demographics[attr] or
-                    if voter.responses[attr].find(demographics[attr]):
+                    # If the voter's response is the same as or within the demographics attribute
+                    if voter.responses[attr] == demographics[attr] or str(voter.responses[attr]).find(str(demographics[attr])) == 0:
                         matches = True
                     else:
                         matches = False
@@ -230,12 +229,13 @@ class Poll:
             # print("TOTAL = %d" % total)
             matching_answer = 0.0
             for voter in voters:
-                if voter.responses[question] == answer:
+                if str(voter.responses[question]) == str(answer):
                     matching_answer += 1.0
+                    # print(voter.timestamp)
             percentage = matching_answer / total * 100
-            print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer, percentage,question,answer))
+            print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer,percentage,question,answer))
 
-            # RIGHT NOW ISN'T ACTUALLY CULLING RESPONSES PROPERLY
+            # I THINK IT WORKS NOW
 
             return percentage
 
@@ -260,6 +260,7 @@ class Voter:
     def __init__(self,poll,row):
         self.Poll = poll
         questions = [q.topic for q in self.Poll.questions]
+        self.timestamp = row[0]
         self.responses = dict(zip(questions, row[1:]))
 
 class Question:

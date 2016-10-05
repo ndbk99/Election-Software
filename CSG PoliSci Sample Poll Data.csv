@@ -1,14 +1,12 @@
-Timestamp,What school are you from?,What grade are you in?,What is your race or ethnicity? Check all that apply.,Are you part of any other minority group?,What is your gender?,What is your political affiliation?,Does your family generally share this affiliation?,Please rate your stance on foreign policy from 1 to 5,Please rate your stance on LGBT+ issues from 1 to 5:,Please rate your stance on abortion from 1 to 5:,Please rate your stance on counter-terrorism from 1 to 5:,Please rate your stance on immigration from 1 to 5:,Please rate your stance on taxation from 1 to 5:,Please rate your stance on funding for the military from 1 to 5:,Please rate your stance on recreational marijuana legalization from 1 to 5:,Which presidential candidate do you support?,Which senatorial candidate do you support?,Comments?
-2016/09/15 10:11:57 AM AST,CSG,12,Caucasian,LGBT+,Other,Democrat,Yes,4,5,4,4,4,4,5,4,Hillary Clinton,Ted Strickland,
-2016/09/15 10:12:02 AM AST,School A,12,Caucasian;Hispanic;Indian,Disabled;LGBT+,Male,Libertarian,4,3,3,1,3,5,2,1,No opinion,Ted Strickland,This is a sample answer and can be deleted later.
-2016/09/15 10:13:04 AM AST,Academy,9,African-American,None,Female,Republican,Yes,4,2,3,2,4,2,3,1,Gary Johnson,Rob Portman,
-2016/09/15 10:14:50 AM AST,Wellington,11,Middle Eastern,Disabled,Male,None,I don't know,5,5,5,5,5,4,4,2,Hillary Clinton,No opinion,
-2016/09/15 10:15:51 AM AST,Academy,9,Caucasian,None,Female,Green,Yes,4,5,4,5,5,2,4,5,Jill Stein,No opinion,
-2016/09/15 10:16:28 AM AST,School B,Middle school,African-American;Native American/Alaskan,LGBT+;Non-citizen;,Female,Tea,I don't know,,i liek tee,3,3,3,3,3,3,3,3,idk but domald trymps naem sounds cool,No opinion,
-2016/09/15 10:16:54 AM AST,CSG,Middle school,Hispanic,None,Female,None,I don't know,3,2,2,4,5,2,4,3,Gary Johnson,Rob Portman
+Timestamp,What school are you from?,What grade are you in?,What is your race or ethnicity? Check all that apply.,Are you part of any other minority group?,What is your gender?,What is your political affiliation?,Does your family generally share this affiliation?,Please rate your stance on foreign policy from 1 to 5,Please rate your stance on LGBT+ issues from 1 to 5:,Please rate your stance on abortion from 1 to 5:,Please rate your stance on counter-terrorism from 1 to 5:,Please rate your stance on immigration from 1 to 5:,Please rate your stance on taxation from 1 to 5:,Please rate your stance on funding for the military from 1 to 5:,Please rate your stance on recreational marijuana legalization from 1 to 5:,Which presidential candidate do you support?,Which senatorial candidate do you support?
+2016/09/15 10:11:57 AM AST,CSG,12,Caucasian,LGBT+,Other,Democrat,Yes,4,5,4,4,4,4,5,4,Hillary Clinton,Ted Strickland
+2016/09/15 10:12:02 AM AST,School A,12,Caucasian;Hispanic;Indian,Disabled;LGBT+,Male,Libertarian,Yes,4,3,3,1,3,5,2,1,No opinion,Ted Strickland
+2016/09/15 10:13:04 AM AST,Academy,9,African-American,None,Female,Republican,Yes,4,2,3,2,4,2,3,1,Gary Johnson,Rob Portman
+2016/09/15 10:14:50 AM AST,Wellington,11,Middle Eastern,Disabled,Male,None,I don't know,5,5,5,5,5,4,4,2,Hillary Clinton,No opinion
+2016/09/15 10:15:51 AM AST,Academy,9,Caucasian,None,Female,Green,Yes,4,5,4,5,5,2,4,5,Jill Stein,No opinion
 2016/09/15 10:17:39 AM AST,St. Charles,10,Caucasian,None,Male,Republican,Yes,1,1,1,1,1,1,1,3,Donald Trump,Rob Portman
 2016/09/15 10:18:52 AM AST,CSG,12,Asian,None,Female,Democrat,No,3,3,4,2,4,3,3,4,No opinion,No opinion
-2016/09/15 10:20:52 AM AST,School C,Faculty,Caucasian,None,Female,Republican,Yes,1,1,1,1,1,1,1,1
+2016/09/15 10:20:52 AM AST,School C,Faculty,Caucasian,None,Female,Republican,Yes,1,1,1,1,1,1,1,1,No opinion,Rob Portman
 2016/09/15 10:24:11 AM AST,School D,9,Pacific Islander,Disabled;LGBT+;Non-citizen,Other,Democrat,No,5,5,5,5,5,5,5,5,Hillary Clinton,No opinion
 2016/09/15 10:28:31 AM AST,School E,12,African-American;Caucasian,None,Male,None,I don't know,1,2,3,1,2,5,2,2,Donald Trump,Rob Portman
 2016/09/15 10:30:37 AM AST,CSG,11,Caucasian,LGBT+,Female,Democrat,Yes,4,5,4,5,4,3,4,3,Hillary Clinton,No opinion
