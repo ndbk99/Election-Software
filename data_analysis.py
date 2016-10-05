@@ -153,7 +153,6 @@ class Poll:
         # Get question topic
         question = self.dropdown_question.get()
 
-
         ###### Select voters and retrieve desired response data from them ######
 
         # Search through dropdowns and see if any have been set
@@ -237,6 +236,30 @@ class Voter:
         self.timestamp = row[0]
         self.responses = dict(zip(questions, row[1:]))
 
+    def calc_stance(self):
+        """
+        Calculates the overall political stance (liberalism or conservatism) of the voter.
+
+        Parameters
+        ----------
+        none (just self); pulls values from self.responses
+
+        Returns
+        -------
+        stance: int, indicating how liberal/conservative the voter is
+        """
+
+        # Find responses that are ints 1-5 and thus correspond to desired responses
+        responses = []
+        for key in self.responses:
+            response = self.responses[key]
+            if response.isdigit() and int(response) <= 5:
+                responses.append(int(response))
+
+        # Calculate and return stance
+        stance = sum(responses)
+        return stance
+
 class Question:
     """
     Class to hold information about a question asked in the poll.
@@ -262,9 +285,13 @@ class Question:
         self.statement = row[1]
         self.responses = row[2:]
 
-questions_file = "Poll_Questions.csv"  # Link to file holding questions
+questions_file = "CSG PoliSci Sample Poll Questions.csv"  # Link to file holding questions
 voters_file = "CSG PoliSci Sample Poll Data.csv"  # Link to file holding voters
+
 csg_poll = Poll(questions_file,voters_file)  # Create poll object
 csg_poll.initialize_poll()  # Initialize analysis window
-# Also, right now the retrieve_data is returning stats out of all voters, since it runs automatically before the user can select
-end = input("")
+
+for voter in csg_poll.voters:
+    print(voter.calc_stance())  # Calculate political stance for each voter
+
+end = input("")  # Keep window open until user exits
