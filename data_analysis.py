@@ -87,16 +87,8 @@ class Poll:
         question = StringVar(self.master)
         question.set("------")
         self.dropdown_question = question
-        self.question_dropdown = OptionMenu(self.master,question,*question_topics[7:],command=self.question_selected)
+        self.question_dropdown = OptionMenu(self.master,question,*question_topics[7:])
         self.question_dropdown.pack()
-
-        # Add label and dropdown for desired answer
-        Label(self.master,text="Answer").pack()
-        answer = StringVar(self.master)
-        answer.set("------")
-        self.dropdown_answer = answer
-        self.answer_dropdown = OptionMenu(self.master,answer,"")
-        self.answer_dropdown.pack()
 
         # Add button to submit query
         submit_button = Button(self.master,text="Submit Query")
@@ -136,37 +128,6 @@ class Poll:
         # Add dropdown value variable to array
         self.dropdowns[self.questions[question_number].topic] = variable
 
-    def question_selected(self,event):
-        """
-        Adds answer options to answer dropdown when a question is selected.
-
-        Parameters
-        ----------
-        event: event thrown from selection of question in the question dropdown
-
-        Returns
-        -------
-        none; adds answers to answer dropdown
-        """
-        # Erase old answer choices
-        self.dropdown_answer.set("------")
-        self.answer_dropdown['menu'].delete(0,'end')
-
-        # Insert new answer choices
-        for question in self.questions:  # Find correct question object from topic name
-            if question.topic == self.dropdown_question.get():
-                new_question = question
-
-        new_answers = new_question.responses  # New array of answers
-        self.answer_dropdown['menu'].add_command(label="------",command=self.dropdown_answer.set("------"))  # Set default answer to blank
-
-        # Add new answer options to menu
-        for answer in new_answers:
-            self.answer_dropdown["menu"].add_command(label=answer, command=lambda answer=answer: self.dropdown_answer.set(answer))
-
-    def send_query(self,event):
-        self.retrieve_data()
-
     def retrieve_data(self):
         """
         Retrieves data on a question for a specific set of voters who fit 1 or more demographic constraints
@@ -189,10 +150,9 @@ class Poll:
                 # this_question = self.questions[key].topic  # PROBLEM HERE... self.questions is not a dictionary
                 demographics[key] = self.dropdowns[key].get()
 
-        # Get question topic; MAPS TO "question" PARAMETER RIGHT NOW
+        # Get question topic
         question = self.dropdown_question.get()
-        # Get answer; MAPS TO "answer" PARAMETER RIGHT NOW
-        answer = self.dropdown_answer.get()
+
 
         ###### Select voters and retrieve desired response data from them ######
 
@@ -224,21 +184,35 @@ class Poll:
         if len(voters) == 0:
             print("No voters matched your query. Please change your parameters and try again.")
         else:
-            # Retrieve response % from voters in target demographic
-            total = len(voters) * 1.0
-            # print("TOTAL = %d" % total)
-            matching_answer = 0.0
+            # Find the correct question
+            for q in self.questions:
+                if q.topic == question:
+                    this_question = q
+
+            # Create empty dictionary to hold counts for each asnwer
+            counts = {}
+            for r in this_question.responses:
+                counts[r] = 0
+
+            # Look through voters and add counts to correct answer bins
             for voter in voters:
-                if str(voter.responses[question]) == str(answer):
-                    matching_answer += 1.0
-                    # print(voter.timestamp)
-            percentage = matching_answer / total * 100
-            print("%d of these voters (%.2f percent) answered %s with '%s'" % (matching_answer,percentage,question,answer))
+                for key in counts:  # Iterate through each answer for each voter and see which they picked
+                    if voter.responses[question] == key:
+                        counts[key] += 1
 
-            # I THINK IT WORKS NOW
+            # Create dictionary holding percentages for each answer
+            percentages = {}
+            n = len(voters)  # Find total number of voters
 
-            return percentage
-
+            # Print all info (calculate percentages as you go also)
+            print(" ")
+            print("Question: %s, n = %d" % (question,n))
+            print(" ")
+            for key in counts:
+                percentages[key] = (counts[key]*100.00) / (n*1.00)
+                print("%s: %.2f%%" % (key,percentages[key]))
+            print(" ")
+            print("----------------")
 
 class Voter:
     """
