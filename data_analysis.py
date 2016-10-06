@@ -1,6 +1,10 @@
 from Tkinter import *
 import csv
 
+n_demographics = 6
+n_questions = 11
+n_scalequestions = 8
+
 class Poll:
     """
     Class to organize and analyze data from a poll.
@@ -19,12 +23,6 @@ class Poll:
         voters: list of voters who responded to the poll
         questions_file: CSV file holding poll questions (see parameter of same name)
         voters_file: CSV file holding voters (see parameter of same name)
-
-    Methods
-    -------
-        read_questions(questions_file): reads in questions from questions_file CSV, creates Question object for each
-        read_voters(voters_file): reads in voters from voters_file CSV, creates Voter object for each
-        generate_window(): creates Tk GUI window with options for data analysis
     """
 
     def __init__(self,questions_file,voters_file):
@@ -77,7 +75,7 @@ class Poll:
 
         # Add labels and dropdowns for demographic attributes
         self.dropdowns = {}
-        for n in range(6):
+        for n in range(n_demographics):
             self.add_demographic_dropdown(n)
 
         # Add label and dropdown for question topic
@@ -113,7 +111,8 @@ class Poll:
         # Retrieve desired question and options
         question = self.questions[question_number]
         question_responses = question.responses
-        question_responses.insert(0,"------")
+        dropdown_options = question_responses
+        dropdown_options.insert(0,"------")
 
         # Demographic label
         label = Label(self.master,text=question.topic)
@@ -122,7 +121,7 @@ class Poll:
         # Demographic dropdown
         variable = StringVar(self.master)
         variable.set("------") # default value
-        dropdown = OptionMenu(self.master,variable,*question_responses)
+        dropdown = OptionMenu(self.master,variable,*dropdown_options)
         dropdown.pack()
 
         # Add dropdown value variable to array
@@ -213,6 +212,31 @@ class Poll:
             print(" ")
             print("----------------")
 
+    def stance_by_demographic(self):
+        demographics_stances_sample = {"Grade": {"9": 3.3, "10": 5, "11": 1.1, "12": 4}, "Gender": {"Male": 2, "Female": 3, "Other": 5}}
+        # Create a dictionary of dictionaries, one dictionary per demographic question with one entry per response
+
+        demographics_stances = {}
+        for demographic in self.questions[0:n_demographics]:
+            demographics_stances[demographic.topic] = {}  # Add empty dictionary for each demographic
+            for response in demographic.responses:  # For each response in the demographic:
+                for voter in self.voters:
+                    total = 0
+                    n = 0
+                    if voter.responses[demographic.topic] == response or voter.responses[demographic.topic].find(response) == 0:
+                        total += voter.calc_stance()  # Add up voter stances within demographic
+                        n += 1  # Count number of voters in the demographic
+                        print("%s, %.2f" % (voter.responses[demographic.topic], voter.calc_stance()))
+                    else:
+                        pass
+                        # print(voter.responses[demographic.topic])
+                print(total)
+                print(n)
+                average = total/1  # Find average stance
+                demographics_stances[demographic.topic][response] = average  # Add average stance for the response as entry in dict
+
+        print(demographics_stances)
+
 class Voter:
     """
     Class to hold information about a voter who responded to the poll.
@@ -225,9 +249,6 @@ class Voter:
     ----------
         Poll: poll object with which the voter is associated
         responses: dictionary of responses to poll questions
-
-    Methods
-    -------
     """
 
     def __init__(self,poll,row):
@@ -246,7 +267,7 @@ class Voter:
 
         Returns
         -------
-        stance: int, indicating how liberal/conservative the voter is
+        stance: int, indicating how liberal/conservative the voter is on a scale from 1 to 5
         """
 
         # Find responses that are ints 1-5 and thus correspond to desired responses
@@ -257,7 +278,7 @@ class Voter:
                 responses.append(int(response))
 
         # Calculate and return stance
-        stance = sum(responses)
+        stance = sum(responses) * 1.0 / n_scalequestions
         return stance
 
 class Question:
@@ -275,10 +296,9 @@ class Question:
     Poll: Poll object with which the question is associated
     topic: topic/label of the question
     statement: the actual quesiton
-
-    Methods
-    -------
+    responses: possible responses to the question
     """
+
     def __init__(self,poll,row):
         self.Poll = poll
         self.topic = row[0]
@@ -291,7 +311,13 @@ voters_file = "CSG PoliSci Sample Poll Data.csv"  # Link to file holding voters
 csg_poll = Poll(questions_file,voters_file)  # Create poll object
 csg_poll.initialize_poll()  # Initialize analysis window
 
+# Print political stance for each voter
+n = 1
 for voter in csg_poll.voters:
-    print(voter.calc_stance())  # Calculate political stance for each voter
+    print("Voter %d stance = %.2f" % (n,voter.calc_stance()))
+    n += 1
+
+# Print average political stance by demographic
+# csg_poll.stance_by_demographic()
 
 end = input("")  # Keep window open until user exits
