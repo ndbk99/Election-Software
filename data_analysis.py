@@ -1,4 +1,5 @@
 from Tkinter import *
+from collections import *
 import csv
 
 n_demographics = 6
@@ -74,7 +75,7 @@ class Poll:
         ########################### GUI elements ###############################
 
         # Add labels and dropdowns for demographic attributes
-        self.dropdowns = {}
+        self.dropdowns = OrderedDict()
         for n in range(n_demographics):
             self.add_demographic_dropdown(n)
 
@@ -110,7 +111,7 @@ class Poll:
         """
         # Retrieve desired question and options
         question = self.questions[question_number]
-        question_responses = question.responses
+        question_responses = question.responses[:]
         dropdown_options = question_responses
         dropdown_options.insert(0,"------")
 
@@ -143,7 +144,7 @@ class Poll:
         ###### Retrieve query data from dropdowns ######
 
         # Get demographics dictionary; MAPS TO "demographics" PARAMETER RIGHT NOW
-        demographics = {}
+        demographics = OrderedDict()
         for key in self.dropdowns:
             if self.dropdowns[key].get() != "------":
                 # this_question = self.questions[key].topic  # PROBLEM HERE... self.questions is not a dictionary
@@ -188,7 +189,7 @@ class Poll:
                     this_question = q
 
             # Create empty dictionary to hold counts for each asnwer
-            counts = {}
+            counts = OrderedDict()
             for r in this_question.responses:
                 counts[r] = 0
 
@@ -199,7 +200,7 @@ class Poll:
                         counts[key] += 1
 
             # Create dictionary holding percentages for each answer
-            percentages = {}
+            percentages = OrderedDict()
             n = len(voters)  # Find total number of voters
 
             # Print all info (calculate percentages as you go also)
@@ -213,29 +214,34 @@ class Poll:
             print("----------------")
 
     def stance_by_demographic(self):
-        demographics_stances_sample = {"Grade": {"9": 3.3, "10": 5, "11": 1.1, "12": 4}, "Gender": {"Male": 2, "Female": 3, "Other": 5}}
         # Create a dictionary of dictionaries, one dictionary per demographic question with one entry per response
-
-        demographics_stances = {}
+        demographics_stances = OrderedDict()
         for demographic in self.questions[0:n_demographics]:
-            demographics_stances[demographic.topic] = {}  # Add empty dictionary for each demographic
+            demographics_stances[demographic.topic] = OrderedDict()  # Add empty dictionary for each demographic
             for response in demographic.responses:  # For each response in the demographic:
+                n = 0
+                total = 0
                 for voter in self.voters:
-                    total = 0
-                    n = 0
                     if voter.responses[demographic.topic] == response or voter.responses[demographic.topic].find(response) == 0:
                         total += voter.calc_stance()  # Add up voter stances within demographic
                         n += 1  # Count number of voters in the demographic
-                        print("%s, %.2f" % (voter.responses[demographic.topic], voter.calc_stance()))
-                    else:
-                        pass
-                        # print(voter.responses[demographic.topic])
-                print(total)
-                print(n)
-                average = total/1  # Find average stance
+                        # print("%s, %.2f" % (voter.responses[demographic.topic], voter.calc_stance()))
+                if n == 0:
+                    average = " - "
+                else:
+                    average = total*1.0/n  # Find average stance
                 demographics_stances[demographic.topic][response] = average  # Add average stance for the response as entry in dict
 
-        print(demographics_stances)
+        # Print results neatly
+        print("--------------\nDistribution of political stances over demographics:\n--------------")
+        for demographic in demographics_stances:
+            demographic_array = demographics_stances[demographic]
+            print(demographic)
+            for option in demographic_array:
+                print("%s: %.5s" % (option, str(demographic_array[option])))
+        print("--------------")
+
+        return demographics_stances
 
 class Voter:
     """
@@ -318,6 +324,6 @@ for voter in csg_poll.voters:
     n += 1
 
 # Print average political stance by demographic
-# csg_poll.stance_by_demographic()
+csg_poll.stance_by_demographic()
 
 end = input("")  # Keep window open until user exits
