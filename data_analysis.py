@@ -2,9 +2,8 @@ from Tkinter import *
 from collections import *
 import csv
 
-n_demographics = 6
-n_questions = 11
-n_scalequestions = 8
+n_demographics = 7
+n_questions = 25
 
 class Poll:
     """
@@ -236,7 +235,9 @@ class Poll:
         print("--------------\nDistribution of political stances over demographics:\n--------------")
         for demographic in demographics_stances:
             demographic_array = demographics_stances[demographic]
+            print("")
             print(demographic)
+            print("---------------")
             for option in demographic_array:
                 print("%s: %.5s" % (option, str(demographic_array[option])))
         print("--------------")
@@ -278,10 +279,12 @@ class Voter:
 
         # Find responses that are ints 1-5 and thus correspond to desired responses
         responses = []
+        n_scalequestions = 0
         for key in self.responses:
             response = self.responses[key]
             if response.isdigit() and int(response) <= 5:
                 responses.append(int(response))
+                n_scalequestions += 1
 
         # Calculate and return stance
         stance = sum(responses) * 1.0 / n_scalequestions
@@ -311,8 +314,8 @@ class Question:
         self.statement = row[1]
         self.responses = row[2:]
 
-questions_file = "CSG PoliSci Sample Poll Questions.csv"  # Link to file holding questions
-voters_file = "CSG PoliSci Sample Poll Data.csv"  # Link to file holding voters
+questions_file = "CSG PoliSci Questions.csv"  # Link to file holding questions
+voters_file = "CSG PoliSci Data.csv"  # Link to file holding voters
 
 csg_poll = Poll(questions_file,voters_file)  # Create poll object
 csg_poll.initialize_poll()  # Initialize analysis window
