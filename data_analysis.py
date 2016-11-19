@@ -2,7 +2,7 @@ from Tkinter import *
 from collections import *
 import csv
 
-n_demographics = 7
+n_demographics = 6
 n_questions = 25
 
 class Poll:
@@ -168,7 +168,7 @@ class Poll:
                 matches = False
                 for attr in demographics:
                     # If the voter's response is the same as or within the demographics attribute
-                    if voter.responses[attr] == demographics[attr] or str(voter.responses[attr]).find(str(demographics[attr])) == 0:
+                    if voter.responses[attr] == demographics[attr] or str(voter.responses[attr]).find(str(demographics[attr])) != -1:
                         matches = True
                     else:
                         matches = False
@@ -286,8 +286,12 @@ class Voter:
                 responses.append(int(response))
                 n_scalequestions += 1
 
-        # Calculate and return stance
-        stance = sum(responses) * 1.0 / n_scalequestions
+        if (n_scalequestions == 0):
+            # Means the voter didn't respond to any issue scale questions! Oy
+            stance = 0
+        else:
+            # Calculate and return stance
+            stance = sum(responses) * 1.0 / n_scalequestions
         return stance
 
 class Question:
@@ -322,9 +326,19 @@ csg_poll.initialize_poll()  # Initialize analysis window
 
 # Print political stance for each voter
 n = 1
+total = 0
+liberalest = 5
+conservativest = 1
 for voter in csg_poll.voters:
-    print("Voter %d stance = %.2f" % (n,voter.calc_stance()))
+    # print("Voter %d stance = %.2f" % (n,voter.calc_stance()))
     n += 1
+    total += voter.calc_stance()
+    if voter.calc_stance() > conservativest:
+        conservativest = voter.calc_stance()
+    if voter.calc_stance() < liberalest:
+        liberalest = voter.calc_stance()
+print("Most liberal stance = %.2f, Most conservative stance = %.2f" % (liberalest,conservativest))
+print("Average political stance = %.3f" % (total/n))
 
 # Print average political stance by demographic
 csg_poll.stance_by_demographic()
